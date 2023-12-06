@@ -3,16 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
+	"os/signal"
 	"github.com/bwmarrin/discordgo"
 	"github.com/gin-gonic/gin"
 	"github.com/hakuuww/hermione/database"
 	"github.com/hakuuww/hermione/routes"
 	"go.mongodb.org/mongo-driver/mongo"
-	"log"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 var (
@@ -21,21 +19,17 @@ var (
 	userc       *mongo.Collection
 	mongoClient *mongo.Client
 	err         error
-	Token       string = "MTE4MTMzODY3MDAzNzQ3MTI0Mg.GKCRz5.7uzmBeU9GRsJq8i95QjbWgQTaKDMe6zTiW1I0o"
 )
 
+const GuildID = "1181344672010997820"
+const channelID = "1182079083249680404"
+
 func init() {
-	mongoClient, err = database.InitDB()
-	if err != nil {
-		panic(err)
-	}
+
 }
 
 func main() {
-	// Start the server
-	server = routes.SetupRouter()
-	port := 8081
-	err = server.Run(fmt.Sprintf("localhost:%d", port))
+	mongoClient, err = database.InitDB()
 	if err != nil {
 		panic(err)
 	}
@@ -46,20 +40,31 @@ func main() {
 		}
 	}()
 
+	//init discord
 	dg := discordGoInit()
 
-	// Wait here until CTRL-C or other term signal is received.
-	fmt.Println("Bot is now running.  Press CTRL-C to exit.")
-	sc := make(chan os.Signal, 1)
-	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
-	<-sc
+	go func() { // Start the server
+		server = routes.SetupRouter(dg)
+		port := 8081
+		err = server.Run(fmt.Sprintf("localhost:%d", port))
+		if err != nil {
+			panic(err)
+		}
+	}()
+
+	// Wait for a signal to exit (e.g., Ctrl+C)
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	<-c
+
 	// Cleanly close down the Discord session.
-	dg.Close()
+	defer dg.Close()
 }
 
 func discordGoInit() *discordgo.Session {
 	// Create a new Discord session using the provided bot token.
-	dg, err := discordgo.New("Bot " + Token)
+	token := os.Getenv("DISCORD_BOT_TOKEN")
+	dg, err := discordgo.New("Bot " + token)
 	if err != nil {
 		fmt.Println("error creating Discord session,", err)
 		return nil
@@ -69,7 +74,7 @@ func discordGoInit() *discordgo.Session {
 	dg.AddHandler(messageCreate)
 
 	// In this example, we only care about receiving message events.
-	dg.Identify.Intents = discordgo.IntentsGuildMessages
+	dg.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsGuildMessages)
 
 	// Open a websocket connection to Discord and begin listening.
 	err = dg.Open()
@@ -79,16 +84,6 @@ func discordGoInit() *discordgo.Session {
 	}
 
 	return dg
-}
-
-func ginInit() {
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
-	r.Run()
 }
 
 // This function will be called (due to AddHandler above) every time a new
