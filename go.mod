@@ -1,4 +1,4 @@
-module discordFileStorage
+module hermione
 
 go 1.21.4
 

@@ -1,6 +1,5 @@
 package database
 
-//Setup functions of mongoDB
 
 import (
 	"context"
