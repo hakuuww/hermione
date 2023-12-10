@@ -5,7 +5,9 @@ go 1.21.4
 require (
 	github.com/bwmarrin/discordgo v0.27.1
 	github.com/gin-gonic/gin v1.9.1
+	github.com/joho/godotenv v1.5.1
 	go.mongodb.org/mongo-driver v1.13.0
+	golang.org/x/time v0.5.0
 )
 
 require (

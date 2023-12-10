@@ -3,14 +3,15 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
-	"os"
-	"os/signal"
 	"github.com/bwmarrin/discordgo"
 	"github.com/gin-gonic/gin"
 	"github.com/hakuuww/hermione/database"
 	"github.com/hakuuww/hermione/routes"
 	"go.mongodb.org/mongo-driver/mongo"
+	"log"
+	"os"
+	"os/signal"
+	"github.com/joho/godotenv"
 )
 
 var (
@@ -24,11 +25,14 @@ var (
 const GuildID = "1181344672010997820"
 const channelID = "1182079083249680404"
 
-func init() {
-
-}
-
 func main() {
+	// Load environment variables from the .env file
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("Error loading .env file")
+		return
+	}
+
 	mongoClient, err = database.InitDB()
 	if err != nil {
 		panic(err)
@@ -40,11 +44,17 @@ func main() {
 		}
 	}()
 
+	dbName := "discordFileStorageServer"
+	db := mongoClient.Database(dbName)
+	collectionName := "fileList"
+	fileList := db.Collection(collectionName)
+
 	//init discord
 	dg := discordGoInit()
 
 	go func() { // Start the server
-		server = routes.SetupRouter(dg)
+		server = routes.SetupRouter(dg, fileList)
+		server.MaxMultipartMemory = 1000 << 20  
 		port := 8081
 		err = server.Run(fmt.Sprintf("localhost:%d", port))
 		if err != nil {
@@ -63,8 +73,8 @@ func main() {
 
 func discordGoInit() *discordgo.Session {
 	// Create a new Discord session using the provided bot token.
-	token := os.Getenv("DISCORD_BOT_TOKEN")
-	dg, err := discordgo.New("Bot " + token)
+	//token := os.Getenv("DISCORD_BOT_TOKEN")
+	dg, err := discordgo.New(os.Getenv("DISCORD_BOT_TOKEN"))
 	if err != nil {
 		fmt.Println("error creating Discord session,", err)
 		return nil
@@ -74,7 +84,7 @@ func discordGoInit() *discordgo.Session {
 	dg.AddHandler(messageCreate)
 
 	// In this example, we only care about receiving message events.
-	dg.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsGuildMessages)
+	dg.Identify.Intents = discordgo.IntentsAllWithoutPrivileged
 
 	// Open a websocket connection to Discord and begin listening.
 	err = dg.Open()

@@ -1,19 +1,19 @@
 package database
 
-
 import (
 	"context"
 	"fmt"
 	"log"
+	"github.com/hakuuww/hermione/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var Db *mongo.Database
 var MongoClient *mongo.Client
 var err error
-
 
 func InitDB() (*mongo.Client, error) {
 	// Use the SetServerAPIOptions() method to set the Stable API version to 1
@@ -65,7 +65,7 @@ func UniqueIndexes() error {
     collection1 := Db.Collection("fileList")
 
     indexmodel := mongo.IndexModel{
-        Keys:    bson.D{{"name", 1}},
+        Keys:    bson.D{{"fileName", 1}, {"fileType", 1}},
         Options: options.Index().SetUnique(true),
     }
 
@@ -76,4 +76,20 @@ func UniqueIndexes() error {
     }
 
 	return nil
+}
+
+// InsertDocument inserts a document into the specified MongoDB collection
+func InsertEmptyFileChunksDocument(ctx context.Context, collection *mongo.Collection, doc models.Document) error {
+	_, err := collection.InsertOne(ctx, doc)
+	return err
+}
+
+// AddFileChunkToDocument finds a document by ID and adds a new entry to the fileChunks array
+func AddFileChunkToDocument(ctx context.Context, collection *mongo.Collection, docID primitive.ObjectID, fileChunk models.FileChunk) error {
+	// Update the document with the new fileChunk
+	filter := bson.M{"_id": docID}
+	update := bson.M{"$push": bson.M{"fileChunks": fileChunk}}
+
+	_, err := collection.UpdateOne(ctx, filter, update)
+	return err
 }
