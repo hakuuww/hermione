@@ -65,7 +65,10 @@ func UniqueIndexes() error {
     collection1 := Db.Collection("fileList")
 
     indexmodel := mongo.IndexModel{
-        Keys:    bson.D{{"fileName", 1}, {"fileType", 1}},
+        Keys:    bson.D{
+						{"fileName", 1}, 
+						{"fileType", 1},
+					},
         Options: options.Index().SetUnique(true),
     }
 
@@ -92,4 +95,17 @@ func AddFileChunkToDocument(ctx context.Context, collection *mongo.Collection, d
 
 	_, err := collection.UpdateOne(ctx, filter, update)
 	return err
+}
+
+// GetFileChunksByFilename retrieves file chunks based on the provided filename.
+func GetDocumentByFilename(ctx context.Context, fileList *mongo.Collection, filename string) (*models.Document, error) {
+	// Search for the document in the collection based on the filename
+	filter := bson.M{"fileName": filename}
+	result := new(models.Document)
+	err := fileList.FindOne(ctx, filter).Decode(&result)
+	if err != nil {
+		return nil, fmt.Errorf("error retrieving file document from db: %v", err)
+	}
+
+	return result, nil
 }

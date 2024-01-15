@@ -29,7 +29,6 @@ const channelID string = "1182079083249680404"
 // FileUploadMiddleware is a middleware that breaks the uploaded file into chunks and stores them in Gin context.
 func FileUploadMiddleware(fileList *mongo.Collection) gin.HandlerFunc {
 	return func(c *gin.Context) {
-
 		var w http.ResponseWriter = c.Writer
 		c.Request.Body = http.MaxBytesReader(w, c.Request.Body, 1000<<40)
 
@@ -60,6 +59,8 @@ func FileUploadMiddleware(fileList *mongo.Collection) gin.HandlerFunc {
 		defer cancel()
 
 		newId := primitive.NewObjectID()
+		lastChunkSize := fileSize-ChunkSize*(numChunks-1)
+
 
 		// Example document with empty fileChunks
 		docWithEmptyChunks := models.Document{
@@ -69,6 +70,9 @@ func FileUploadMiddleware(fileList *mongo.Collection) gin.HandlerFunc {
 			NumOfChunks:   numChunks,
 			FileSizeBytes: fileSize,
 			FileChunks:    []models.FileChunk{}, // Create an empty slice of the struct type,
+			NomralChunkSize: ChunkSize,
+			LastChunkSize: lastChunkSize,
+
 		}
 
 		if err = database.InsertEmptyFileChunksDocument(ctx, fileList, docWithEmptyChunks) ; err!=nil {
@@ -93,9 +97,10 @@ func FileUploadMiddleware(fileList *mongo.Collection) gin.HandlerFunc {
 		// Read the file into chunks
 		for i := int64(0); i < numChunks; i++ {
 			chunkSize := ChunkSize
+
 			if i == numChunks-1 {
 				// Last chunk might be smaller
-				chunkSize = fileSize - i*ChunkSize
+				chunkSize = lastChunkSize
 			}
 
 			chunk := make([]byte, chunkSize)
@@ -219,3 +224,5 @@ func UploadHandler(c *gin.Context, dg *discordgo.Session, fileList *mongo.Collec
 
 	c.JSON(http.StatusOK, gin.H{"message": "File uploaded and sent to Discord"})
 }
+
+
