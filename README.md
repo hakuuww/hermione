@@ -1,4 +1,5 @@
 A cloud drive that takes advantage of discord's infinite storage thats given to user servers. The name hermione is inspired by Hermione Granger from Harry Potter, who studied really hard and can remember all knowledge in her mind like a human library. 
+
 Personally, I use discord to transfer pdf files from my iPad to my computer and back and fourth for school.
 But Discord has a restriction for the maximum size of files that you can upload and send which is 25 megabytes. 
 
