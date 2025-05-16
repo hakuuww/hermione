@@ -25,7 +25,7 @@ This project demonstrates the use of a Discord bot library for Go, Gin web frame
 - **HTTP API**: Use the Gin web framework to handle file upload and download requests.
 - **Discord API**: Implemented a Discord bot that can read, write and delete files in specified channels(directories) within a Discord server.
 - **MongoDB**: Tracks uploaded files, their names, type, meta data, their chunk distributions/locations in specific Discord channels within a server.
-- **Slow but working file upload and retrieval**: Takes a few seconds for a rather large file. The main bottleneck is on interacting with Discord (writing and reading files from/onto web server memory buffer)
+- **Slow but working file upload and retrieval**: Takes a few seconds for a rather large file (~100sMB). The main bottleneck is on interacting with Discord (writing and reading files from/onto web server memory buffer)
 - **Concurrency/Optimization**: Go’s concurrency model (goroutines and wait groups) drastically improves upload and download performance. A single Goroutine is responsible of its own chunk and the Discord API logic for writing and retrieving it.
 
 ## Technologies
