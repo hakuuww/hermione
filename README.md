@@ -1,5 +1,7 @@
 # Hermione: Your own free unlimited cloud drive using Discord
 
+![image](https://github.com/user-attachments/assets/dfb29f36-55ce-427c-9ae0-5b36f1ebe345)
+
 
 Hermione is a toy project to make use of Discord’s free unlimited storage provided to user servers.
 Named after Hermione Granger from *Harry Potter*, just like Hermione who can remember everything as this tool allows users to upload, store, and retrieve large files through Discord channels for free. 
