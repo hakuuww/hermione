@@ -1,4 +1,4 @@
-# Hermione: Your own free unlimited cloud drive using Discord
+# Hermione: Free unlimited cloud drive using Discord
 
 ![image](https://github.com/user-attachments/assets/dfb29f36-55ce-427c-9ae0-5b36f1ebe345)
 
