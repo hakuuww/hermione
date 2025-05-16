@@ -7,6 +7,7 @@
 ![Gin](https://img.shields.io/badge/Framework-Gin-00b140)
 ![Discord API](https://img.shields.io/badge/API-Discord-7289da)
 ![Discord Go](https://img.shields.io/badge/Library-DiscordGo-7289da)
+
 Hermione is a toy project to make use of Discord’s free unlimited storage provided to user servers.
 Named after Hermione Granger from *Harry Potter*.
 Just like Hermione who can remember everything, this project allows users to upload, store, and retrieve large files through Discord channels for free. 
