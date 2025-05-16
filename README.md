@@ -4,10 +4,11 @@
 
 
 Hermione is a toy project to make use of Discord’s free unlimited storage provided to user servers.
-Named after Hermione Granger from *Harry Potter*, just like Hermione who can remember everything as this tool allows users to upload, store, and retrieve large files through Discord channels for free. 
-The files are split into chunks to work around Discord’s 25 MB file upload limitation. 
+Named after Hermione Granger from *Harry Potter*.
+Just like Hermione who can remember everything, this project allows users to upload, store, and retrieve large files through Discord channels for free. 
+Files transfer are through HTTP, a large file is physically split into chunks and split around different destinations on Discord to work around Discord’s 25 MB file upload limitation. 
 
-This project demonstrates the use of a Discord bot library for Go, Gin web framework, MongoDB (or any KV store like Redis), and Go concurrency principles to facilitate a very basic Go web server with database backend.
+This project demonstrates the use of a Discord bot library for Go, Gin web framework, MongoDB (or any KV store like Redis), and Go concurrency principles to facilitate a very basic Go web server with a database backend.
 
 > **Disclaimer**: This project is meant purely for learning and experimenting with Go, REST APIs, and exploiting Discord’s infrastructure in creative ways. Files may not be safe long-term as Discord’s policies may change, and messages may be cleaned up.
 > **This is only a toy project, I only uploaded a few files for testing purposes, please don't sue me Discord.**
