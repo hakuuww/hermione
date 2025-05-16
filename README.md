@@ -96,11 +96,11 @@ curl http://localhost:8080/search/filename.pdf
 
 ### License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+Do what ever you want, this is a toy project.
 
 ### Disclaimer
 
-This tool is a proof of concept for learning purposes. Using Discord to store files in this manner may violate Discord’s Terms of Service, and there is a risk that your files may be lost or deleted without warning. Use it at your own risk.
+This tool is a proof of concept for learning purposes. Using Discord to store files in this manner may violate Discord’s Terms of Service, and of course there is a risk that your files may be lost or deleted without warning. Use it at your own risk.
 
 
 
